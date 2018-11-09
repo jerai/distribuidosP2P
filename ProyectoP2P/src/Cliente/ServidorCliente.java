@@ -1,4 +1,4 @@
-package Servidor;
+package Cliente;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -6,12 +6,12 @@ import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class Principal {
+public class ServidorCliente {
 
-	public static void main(String[] args) {
-		try (ServerSocket ss = new ServerSocket(6666);){
+	public ServidorCliente() {
+		try (ServerSocket ss = new ServerSocket();){
 			Socket cliente;
-			ExecutorService pool = Executors.newCachedThreadPool();// Hay que probar cuantos hilos soporta para ponerlo fijo
+			ExecutorService pool = Executors.newCachedThreadPool();
 			while(true) {
 				try {
 					cliente = ss.accept();
@@ -23,7 +23,6 @@ public class Principal {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
 	}
 
 }
