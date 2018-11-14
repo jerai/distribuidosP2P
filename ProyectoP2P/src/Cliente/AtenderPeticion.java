@@ -2,6 +2,8 @@ package Cliente;
 
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.RandomAccessFile;
 import java.net.Socket;
 
 public class AtenderPeticion implements Runnable {
