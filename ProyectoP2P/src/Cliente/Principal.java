@@ -40,7 +40,9 @@ public class Principal {
 				opcion = sn.nextLine();
 			} while(opcion.equals("Y") | opcion.equals("y"));
 			// Desconectar al cliente, quitándole de la tabla del servidor
-			os.writeUTF("SET");			
+			os.writeUTF("SET");	
+			sn.close();
+			timer.cancel();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
