@@ -8,8 +8,8 @@ import java.util.concurrent.Executors;
 
 public class ServidorCliente {
 
-	public ServidorCliente() {
-		try (ServerSocket ss = new ServerSocket();){
+	public ServidorCliente(int puerto) {
+		try (ServerSocket ss = new ServerSocket(puerto)){
 			Socket cliente;
 			ExecutorService pool = Executors.newCachedThreadPool();
 			while(true) {

@@ -7,6 +7,12 @@ import java.util.concurrent.Executors;
 
 public class ClienteCliente {
 	
+	private String descarga;
+	
+	public ClienteCliente(String descarga) {
+		this.descarga = descarga;
+	}
+	
 	private void descargador() {
 
 		
