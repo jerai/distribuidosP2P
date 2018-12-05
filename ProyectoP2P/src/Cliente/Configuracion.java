@@ -7,7 +7,7 @@ import java.util.Properties;
 
 public class Configuracion {
 	
-	private static String nombreFichero = "config.properties";
+	private static String nombreFichero = "./Resources/config.properties";
 
 	public static String get(String key) {
 		try {
