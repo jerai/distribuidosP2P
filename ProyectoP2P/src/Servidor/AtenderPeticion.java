@@ -20,26 +20,18 @@ public class AtenderPeticion implements Runnable{
 		 * Protocolos:
 		 * GET --> Pasar la tabla al cliente
 		 * SET --> Actualizar la lista de ficheros de ese cliente
-		 * END --> Finaliza la conexión
 		 */
 		try (DataInputStream is = new DataInputStream(this.cliente.getInputStream());){
-			boolean terminado = false;
-			// mientras que ese cliente quiera hacer más operaciones no se cierra la conexión
-			while(!terminado) {
-				String protocolo = is.readLine();
-				switch (protocolo) {
-					case "GET":
-						getTabla();
-						break;
-					case "SET":
-						actualizarFicheros();
-						break;
-					case "END":
-						terminado = true;
-						break;
-					default:
-						break;
-				}
+			String protocolo = is.readLine();
+			switch (protocolo) {
+				case "GET":
+					getTabla();
+					break;
+				case "SET":
+					actualizarFicheros();
+					break;
+				default:
+					break;
 			}
 			
 		} catch (IOException e) {

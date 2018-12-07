@@ -20,58 +20,78 @@ public class ObtenerTabla extends TimerTask {
 
 	private File directorio;
 	private long fechaModificacion;
-	private Socket cliente;
 
 	private Map<Fichero, List<Cliente>> TABLA;
 
-	public ObtenerTabla(File directorio, long fechaModificacion, Socket cliente) {
+	public ObtenerTabla(File directorio, long fechaModificacion) {
 		this.directorio = directorio;
 		this.fechaModificacion = fechaModificacion;
-		this.cliente = cliente;
 	}
 
 	public void run() {
 		InputStream is = null;
 		OutputStream os = null;
-		try {
-			if (this.directorio.lastModified() != this.fechaModificacion) {
-				System.out.println("Actualizando tabla " + (this.directorio.lastModified() - this.fechaModificacion));// <--------------------- prueba
-				this.fechaModificacion = this.directorio.lastModified();
-				os = cliente.getOutputStream();
-				is = cliente.getInputStream();
-				os.write("GET\n".getBytes());
-				this.TABLA = recibirTabla(is);
-				
-				os.write("SET\n".getBytes());
-				mandarTabla(os);
+		String ip = Configuracion.get("ipServidor");
+		int puerto = Integer.parseInt(Configuracion.get("puertoServidor"));
+		
+		System.out.println("Actualizando tabla " + (this.directorio.lastModified() - this.fechaModificacion));// <--------------------- prueba
+		
+		if (this.directorio.lastModified() != this.fechaModificacion) {
+			this.fechaModificacion = this.directorio.lastModified();
+			
+			try (Socket socket1 = new Socket(ip, puerto);){
+					mandarTabla(socket1);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+		}
 
-				os.write("END\n".getBytes());
-				
-				// prueba
-				for (Fichero fichero : TABLA.keySet()) {
-					System.out.println(fichero);
-				}
+		try (Socket socket2 = new Socket(ip, puerto);){
+			this.TABLA = recibirTabla(socket2);
+			
+			// prueba
+			for (Fichero fichero : TABLA.keySet()) {
+				System.out.println(fichero);
 			}
 		} catch (IOException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 	}
 
-	// Crea un objeto Map<String, Fichero> con los ficheros del directorio
-	// compartido y lo manda por el OutputStream os
-	private void mandarTabla(OutputStream os) throws IOException {
+	// Crea un objeto Map<String, Fichero> con los ficheros del directorio compartido y lo manda por el Socket
+	private void mandarTabla(Socket s) throws IOException {
 		Map<Fichero, List<Cliente>> tablita = new HashMap<>();
 		Fichero f;
-		for (File aux : this.directorio.listFiles()) {
+		for (File aux : getFicheros(this.directorio)) {
 			f = new Fichero(HashSHA256.getHash(aux), aux.getName(), aux.getPath());
 			tablita.put(f, new ArrayList<>());
 		}
+		
+		OutputStream os = s.getOutputStream();
+		os.write("SET\n".getBytes());
 		ObjectOutputStream oos = new ObjectOutputStream(os);
 		oos.writeObject(tablita);
 	}
+	
+	// Devuelve una lista con los ficheros que contiene un directorio incluyendo los que están en carpetas
+	private List<File> getFicheros(File direct) {
+		List<File> list = new ArrayList<>();
+		for (File file : direct.listFiles()) {
+			if(file.isFile()) {
+				list.add(file);
+			}else {
+				list.addAll(getFicheros(file));
+			}
+		}
+		return list;
+	}
 
-	// Recibe un objeto Map<String, Fichero> con los ficheros disponibles en la red
-	private Map<Fichero, List<Cliente>> recibirTabla(InputStream is) throws IOException, ClassNotFoundException {
+	// Recibe un objeto Map<String, Fichero> con los ficheros disponibles en la red a través del socket
+	private Map<Fichero, List<Cliente>> recibirTabla(Socket s) throws IOException, ClassNotFoundException {
+		OutputStream os = s.getOutputStream();
+		os.write("GET\n".getBytes());
+		InputStream is = s.getInputStream();
 		ObjectInputStream ois = new ObjectInputStream(is);
 		Map<Fichero, List<Cliente>> tabla = (Map<Fichero, List<Cliente>>) ois.readObject();
 

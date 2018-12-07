@@ -30,18 +30,20 @@ public final class TablaXML {
 			HashMap<Fichero, List<Cliente>> tablita = (HashMap<Fichero, List<Cliente>>) aux;
 
 			for (Fichero f : tablita.keySet()) {
-				if(TABLA.containsKey(f)) {
-					TABLA.get(f).add(cli);
-				}else {
+				if(TABLA.containsKey(f)) {// si ya tenemos el fichero
+					if(!TABLA.get(f).contains(cli)) {// si no teniamos ese cliente asociado al fichero
+						TABLA.get(f).add(cli);
+					}
+				}else {// si el fichero es nuevo
 					List<Cliente> l = new ArrayList<>();
 					l.add(cli);
 					TABLA.put(f, l);
 				}
 			}
+			
 		} catch (IOException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-		
     }
     
     // Manda la tabla en forma de objeto por el OutputStream que se le pasa

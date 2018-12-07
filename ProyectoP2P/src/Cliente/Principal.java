@@ -29,7 +29,7 @@ public class Principal {
 			DataOutputStream os = new DataOutputStream(cliente.getOutputStream())){
 			Timer timer = new Timer();
 			do{
-				timer.schedule(new ObtenerTabla(directorio, directorio.lastModified(), cliente), 0, TimeUnit.MINUTES.toMinutes(5));
+				timer.schedule(new ObtenerTabla(directorio, directorio.lastModified()), 0, TimeUnit.MINUTES.toMinutes(5));
 				// Mostrar la tabla obtenida del servidor
 				System.out.print("Elige el fichero de la tabla que quieres descargar: ");
 				descarga = sn.nextLine();

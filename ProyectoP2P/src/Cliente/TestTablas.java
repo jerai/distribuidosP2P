@@ -12,15 +12,11 @@ public class TestTablas {
 		try {
 			Timer timer = new Timer();
 			File directorio = new File(Configuracion.get("directorioCompartido"));
-			Socket cli = new Socket(Configuracion.get("ipServidor"), Integer.parseInt(Configuracion.get("puertoServidor")));
-			ObtenerTabla obt = new ObtenerTabla(directorio, 0, cli);
+			
+			ObtenerTabla obt = new ObtenerTabla(directorio, 0);
 			timer.scheduleAtFixedRate(obt, 0, 10000);
 			
 		} catch (NumberFormatException e) {
-			e.printStackTrace();
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
