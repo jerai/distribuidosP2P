@@ -22,14 +22,17 @@ public class Principal {
 		System.out.print("¿Desea introducir un directorio para compartir y descargar ficheros? (Y/N): ");
 		opcion = sn.nextLine();
 		directorio = seleccionarDirectorio(opcion);
-		System.out.print("Selecciona el puerto donde quieres que funcione tu servidor: ");
-		puerto = sn.nextInt();
-		ServidorCliente sc = new ServidorCliente(puerto);
+		// El puerto servidor se asigna automáticamente
+//		System.out.print("Selecciona el puerto donde quieres que funcione tu servidor: ");
+//		puerto = sn.nextInt();
+//		ServidorCliente sc = new ServidorCliente(puerto);
+		ServidorCliente sc = new ServidorCliente();
 		try(Socket cliente = new Socket("localhost", 6666);
 			DataOutputStream os = new DataOutputStream(cliente.getOutputStream())){
 			Timer timer = new Timer();
 			do{
-				timer.schedule(new ObtenerTabla(directorio, directorio.lastModified(), cliente), 0, TimeUnit.MINUTES.toMinutes(5));
+				ObtenerTabla obtTabla = new ObtenerTabla(directorio, directorio.lastModified(), sc.getPuerto());
+				timer.schedule(obtTabla, 0, TimeUnit.MINUTES.toMinutes(5));
 				// Mostrar la tabla obtenida del servidor
 				System.out.print("Elige el fichero de la tabla que quieres descargar: ");
 				descarga = sn.nextLine();
