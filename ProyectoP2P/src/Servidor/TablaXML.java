@@ -19,29 +19,46 @@ public final class TablaXML {
 	private static ConcurrentHashMap<Fichero, List<Cliente>> TABLA = new ConcurrentHashMap<>();;
 	private static List<Cliente> listaClientes = new ArrayList<>();
 
-    // Recibe un objeto ConcurrentHashMap<String, Fichero> por el InputStream y actualiza la tabla con los registros de ficheros que tiene el cliente cli en su directorio compartido
+    // Recibe un objeto List<Fichero> por el InputStream y actualiza la TABLA con los registros de ficheros que tiene el cliente cli en su directorio compartido
     public static void actualizarTabla(InputStream is, Cliente cli) {
 		try {
 			if(!listaClientes.contains(cli))
 				listaClientes.add(cli);
 			
 			ObjectInputStream ois = new ObjectInputStream(is);
-			Object aux = ois.readObject();
-			HashMap<Fichero, List<Cliente>> tablita = (HashMap<Fichero, List<Cliente>>) aux;
+			List<Fichero> listFicheros = (List<Fichero>) ois.readObject();
 
-			for (Fichero f : tablita.keySet()) {
-				if(TABLA.containsKey(f)) {
-					TABLA.get(f).add(cli);
-				}else {
+			for (Fichero f : listFicheros) {
+				if(TABLA.containsKey(f)) {// si ya tenemos el fichero
+					if(!TABLA.get(f).contains(cli)) {// si no teniamos ese cliente asociado al fichero
+						TABLA.get(f).add(cli);
+					}
+				}else {// si el fichero es nuevo
 					List<Cliente> l = new ArrayList<>();
 					l.add(cli);
 					TABLA.put(f, l);
 				}
+				
+				// Para borrar los que ya no están disponibles
+				for(Fichero ff : TABLA.keySet()) {
+					if(!listFicheros.contains(ff)) {
+						List<Cliente> aux = TABLA.get(ff);
+						if(aux.contains(cli)) {
+							if(aux.size()==1) {
+								TABLA.remove(ff);
+							}else {
+								aux.remove(cli);
+							}
+						}
+					}
+				}
+				
 			}
+			
+			
 		} catch (IOException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-		
     }
     
     // Manda la tabla en forma de objeto por el OutputStream que se le pasa

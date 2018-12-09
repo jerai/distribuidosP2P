@@ -53,18 +53,25 @@ public class Fichero implements Serializable{
 	}
 	
 	// Métodos redefinidos
+	// Dos Ficheros son iguales si coincide su hash
 	@Override
 	public boolean equals(Object obj) {
 		if(obj instanceof Fichero) {
 			Fichero f = (Fichero) obj;
-			return this.hash==f.getHash();
+			return this.hash.equals(f.getHash());
 		}
 		return false;
 	}
 	
 	@Override
 	public String toString() {
-		return "Hash: " + this.hash + "Path: " + this.direccion;
+		return "- Hash: " + this.hash + " - Path: " + this.direccion;
+	}
+	
+	// Con esto funciona la busqueda de claves en la tabla
+	@Override
+	public int hashCode() {
+		return 1;
 	}
 	
 	
