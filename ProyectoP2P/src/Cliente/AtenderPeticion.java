@@ -9,9 +9,11 @@ import java.net.Socket;
 public class AtenderPeticion implements Runnable {
 
 	private Socket cliente;
+	private int puertoServidor;
 
-	public AtenderPeticion(Socket cliente) {
+	public AtenderPeticion(Socket cliente, int puertoServidor) {
 		this.cliente = cliente;
+		this.puertoServidor = puertoServidor;
 	}
 
 	public void run() {

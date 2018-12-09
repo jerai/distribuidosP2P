@@ -65,7 +65,7 @@ public class Fichero implements Serializable{
 	
 	@Override
 	public String toString() {
-		return "- Hash: " + this.hash + "  - Path: " + this.direccion;
+		return "- Hash: " + this.hash + " - Path: " + this.direccion;
 	}
 	
 	// Con esto funciona la busqueda de claves en la tabla

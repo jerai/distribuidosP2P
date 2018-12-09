@@ -8,7 +8,6 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TimerTask;
@@ -20,12 +19,14 @@ public class ObtenerTabla extends TimerTask {
 
 	private File directorio;
 	private long fechaModificacion;
+	private int puertoServidor;
 
 	private Map<Fichero, List<Cliente>> TABLA;
 
-	public ObtenerTabla(File directorio, long fechaModificacion) {
+	public ObtenerTabla(File directorio, long fechaModificacion, int puertoServidor) {
 		this.directorio = directorio;
 		this.fechaModificacion = fechaModificacion;
+		this.puertoServidor = puertoServidor;
 	}
 
 	public void run() {
@@ -34,9 +35,10 @@ public class ObtenerTabla extends TimerTask {
 		String ip = Configuracion.get("ipServidor");
 		int puerto = Integer.parseInt(Configuracion.get("puertoServidor"));
 		
-		System.out.println("Actualizando tabla " + (this.directorio.lastModified() - this.fechaModificacion));// <--------------------- prueba
+		System.out.println("----------------------------------------------------------");// <--------------------- prueba
 		
-		if (this.directorio.lastModified() != this.fechaModificacion) {
+		if (this.fechaModificacion != this.directorio.lastModified()) {
+			System.out.println("Actualizando tabla " + (this.directorio.lastModified() - this.fechaModificacion));// <--------------------- prueba
 			this.fechaModificacion = this.directorio.lastModified();
 			
 			try (Socket socket1 = new Socket(ip, puerto);){
@@ -50,8 +52,7 @@ public class ObtenerTabla extends TimerTask {
 		try (Socket socket2 = new Socket(ip, puerto);){
 			this.TABLA = recibirTabla(socket2);
 			
-			// prueba
-			for (Fichero fichero : TABLA.keySet()) {
+			for (Fichero fichero : TABLA.keySet()) {// <--------------------- prueba
 				System.out.println(fichero);
 			}
 		} catch (IOException | ClassNotFoundException e) {
@@ -59,19 +60,30 @@ public class ObtenerTabla extends TimerTask {
 		}
 	}
 
-	// Crea un objeto Map<String, Fichero> con los ficheros del directorio compartido y lo manda por el Socket
+	// Crea un objeto List<Fichero> con los ficheros del directorio compartido y lo manda por el Socket
 	private void mandarTabla(Socket s) throws IOException {
-		Map<Fichero, List<Cliente>> tablita = new HashMap<>();
+		List<Fichero> listFicheros = new ArrayList<>();
 		Fichero f;
 		for (File aux : getFicheros(this.directorio)) {
 			f = new Fichero(HashSHA256.getHash(aux), aux.getName(), aux.getPath());
-			tablita.put(f, new ArrayList<>());
+			listFicheros.add(f);
 		}
 		
 		OutputStream os = s.getOutputStream();
-		os.write("SET\n".getBytes());
+		os.write(("SET " + this.puertoServidor + "\n").getBytes());
 		ObjectOutputStream oos = new ObjectOutputStream(os);
-		oos.writeObject(tablita);
+		oos.writeObject(listFicheros);
+	}
+
+	// Recibe un objeto Map<String, Fichero> con los ficheros disponibles en la red a través del socket
+	private Map<Fichero, List<Cliente>> recibirTabla(Socket s) throws IOException, ClassNotFoundException {
+		OutputStream os = s.getOutputStream();
+		os.write("GET\n".getBytes());
+		InputStream is = s.getInputStream();
+		ObjectInputStream ois = new ObjectInputStream(is);
+		Map<Fichero, List<Cliente>> tabla = (Map<Fichero, List<Cliente>>) ois.readObject();
+
+		return tabla;
 	}
 	
 	// Devuelve una lista con los ficheros que contiene un directorio incluyendo los que están en carpetas
@@ -86,16 +98,9 @@ public class ObtenerTabla extends TimerTask {
 		}
 		return list;
 	}
-
-	// Recibe un objeto Map<String, Fichero> con los ficheros disponibles en la red a través del socket
-	private Map<Fichero, List<Cliente>> recibirTabla(Socket s) throws IOException, ClassNotFoundException {
-		OutputStream os = s.getOutputStream();
-		os.write("GET\n".getBytes());
-		InputStream is = s.getInputStream();
-		ObjectInputStream ois = new ObjectInputStream(is);
-		Map<Fichero, List<Cliente>> tabla = (Map<Fichero, List<Cliente>>) ois.readObject();
-
-		return tabla;
+	
+	public Map<Fichero, List<Cliente>> getTabla(){
+		return this.TABLA;
 	}
 
 }

@@ -8,7 +8,7 @@ import org.w3c.dom.Element;
 public class Cliente implements Serializable{
 
 	private String ip;
-	private int puerto;
+	private int puerto;// puerto de su servidor
 	
 	// Constructores
 	public Cliente(String ip, int puerto) {
@@ -34,6 +34,27 @@ public class Cliente implements Serializable{
 
 	public void setPuerto(int puerto) {
 		this.puerto = puerto;
+	}
+	
+	// Métodos redefinidos
+	
+	@Override
+	public boolean equals(Object obj) {
+		if(obj instanceof Cliente) {
+			Cliente c = (Cliente) obj;
+			return (this.ip.equals(c.getIp()) && this.puerto==c.getPuerto());
+		}
+		return false;
+	}
+	
+	@Override
+	public String toString() {
+		return "- Ip: " + this.ip + " - Puerto: " + this.puerto;
+	}
+	
+	@Override
+	public int hashCode() {
+		return 1;
 	}
 	
 }

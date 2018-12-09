@@ -19,22 +19,25 @@ public class AtenderPeticion implements Runnable{
 		/*
 		 * Protocolos:
 		 * GET --> Pasar la tabla al cliente
-		 * SET --> Actualizar la lista de ficheros de ese cliente
+		 * SET <protocolo> --> Actualizar la lista de ficheros de ese cliente. <protocolo> es el protocolo por el que el cliente atiende peticiones
 		 */
 		try (DataInputStream is = new DataInputStream(this.cliente.getInputStream());){
-			String protocolo = is.readLine();
+			String mensaje = is.readLine();
+			String protocolo = mensaje.split(" ")[0];
 			switch (protocolo) {
 				case "GET":
 					getTabla();
 					break;
 				case "SET":
-					actualizarFicheros();
+					if(mensaje.length()>1) {
+						actualizarFicheros(Integer.parseInt(mensaje.split(" ")[1]));
+					}
 					break;
 				default:
 					break;
 			}
 			
-		} catch (IOException e) {
+		} catch (IOException | NumberFormatException e) {
 			e.printStackTrace();
 		}
 		
@@ -46,9 +49,8 @@ public class AtenderPeticion implements Runnable{
 	}
 
 	// Actualiza la tabla con los datos que recibe del cliente
-	private void actualizarFicheros() throws IOException {
+	private void actualizarFicheros(int puerto) throws IOException {
 		String ip = this.cliente.getInetAddress().getHostAddress();
-		int puerto = this.cliente.getPort();
 		
 		Cliente c = TablaXML.getCliente(ip, puerto);
 		if(c==null)

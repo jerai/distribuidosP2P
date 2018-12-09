@@ -1,10 +1,13 @@
-package Cliente;
+package Test;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Timer;
+
+import Cliente.Configuracion;
+import Cliente.ObtenerTabla;
 
 public class TestTablas {
 
@@ -13,7 +16,7 @@ public class TestTablas {
 			Timer timer = new Timer();
 			File directorio = new File(Configuracion.get("directorioCompartido"));
 			
-			ObtenerTabla obt = new ObtenerTabla(directorio, 0);
+			ObtenerTabla obt = new ObtenerTabla(directorio, 0, 0);
 			timer.scheduleAtFixedRate(obt, 0, 10000);
 			
 		} catch (NumberFormatException e) {
