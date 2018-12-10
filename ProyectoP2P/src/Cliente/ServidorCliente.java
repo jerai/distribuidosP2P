@@ -9,29 +9,19 @@ import java.util.concurrent.Executors;
 import ModeloDeDominio.Cliente;
 
 public class ServidorCliente {
-	
-	private int puertoServidor;
 
-	public ServidorCliente() {
-		try (ServerSocket ss = new ServerSocket(0)){
-			this.puertoServidor = ss.getLocalPort();
-			Socket cliente;
-			ExecutorService pool = Executors.newCachedThreadPool();
-			while(true) {
-				try {
-					cliente = ss.accept();
-					pool.execute(new AtenderPeticion(cliente, this.puertoServidor));
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+	public ServidorCliente(ServerSocket ss) {
+		System.out.println(ss.getLocalPort());// prueba <-------------------------------------
+		Socket cliente;
+		ExecutorService pool = Executors.newCachedThreadPool();
+		while(true) {
+			try {
+				cliente = ss.accept();
+				pool.execute(new AtenderPeticion(cliente, ss.getLocalPort()));
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
-	}
-
-	public int getPuerto() {
-		return puertoServidor;
 	}
 
 }

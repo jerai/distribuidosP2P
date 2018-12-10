@@ -3,6 +3,7 @@ package Cliente;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -22,16 +23,16 @@ public class Principal {
 		System.out.print("¿Desea introducir un directorio para compartir y descargar ficheros? (Y/N): ");
 		opcion = sn.nextLine();
 		directorio = seleccionarDirectorio(opcion);
-		// El puerto servidor se asigna automáticamente
-//		System.out.print("Selecciona el puerto donde quieres que funcione tu servidor: ");
-//		puerto = sn.nextInt();
-//		ServidorCliente sc = new ServidorCliente(puerto);
-		ServidorCliente sc = new ServidorCliente();
+		
+		
 		try(Socket cliente = new Socket("localhost", 6666);
+			ServerSocket ss = new ServerSocket(0);
 			DataOutputStream os = new DataOutputStream(cliente.getOutputStream())){
+			
+			ServidorCliente sc = new ServidorCliente(ss);
 			Timer timer = new Timer();
 			do{
-				ObtenerTabla obtTabla = new ObtenerTabla(directorio, directorio.lastModified(), sc.getPuerto());
+				ObtenerTabla obtTabla = new ObtenerTabla(directorio, directorio.lastModified(), ss.getLocalPort());
 				timer.schedule(obtTabla, 0, TimeUnit.MINUTES.toMinutes(5));
 				// Mostrar la tabla obtenida del servidor
 				System.out.print("Elige el fichero de la tabla que quieres descargar: ");

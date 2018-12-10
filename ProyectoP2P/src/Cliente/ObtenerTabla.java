@@ -62,12 +62,7 @@ public class ObtenerTabla extends TimerTask {
 
 	// Crea un objeto List<Fichero> con los ficheros del directorio compartido y lo manda por el Socket
 	private void mandarTabla(Socket s) throws IOException {
-		List<Fichero> listFicheros = new ArrayList<>();
-		Fichero f;
-		for (File aux : getFicheros(this.directorio)) {
-			f = new Fichero(HashSHA256.getHash(aux), aux.getName(), aux.getPath());
-			listFicheros.add(f);
-		}
+		List<Fichero> listFicheros = Configuracion.getListaFicheros();
 		
 		OutputStream os = s.getOutputStream();
 		os.write(("SET " + this.puertoServidor + "\n").getBytes());
@@ -84,19 +79,6 @@ public class ObtenerTabla extends TimerTask {
 		Map<Fichero, List<Cliente>> tabla = (Map<Fichero, List<Cliente>>) ois.readObject();
 
 		return tabla;
-	}
-	
-	// Devuelve una lista con los ficheros que contiene un directorio incluyendo los que están en carpetas
-	private List<File> getFicheros(File direct) {
-		List<File> list = new ArrayList<>();
-		for (File file : direct.listFiles()) {
-			if(file.isFile()) {
-				list.add(file);
-			}else {
-				list.addAll(getFicheros(file));
-			}
-		}
-		return list;
 	}
 	
 	public Map<Fichero, List<Cliente>> getTabla(){
