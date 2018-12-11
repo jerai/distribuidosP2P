@@ -21,7 +21,7 @@ public class ServidorCliente implements Runnable {
 	}
 
 	public void run() {
-			System.out.println(this.ss.getLocalPort());	// prueba <-------------------------------------
+			System.out.println("PUERTO SERVIDOR CLIENTE: " + this.ss.getLocalPort());	// prueba <-------------------------------------
 			Socket cliente;
 			ExecutorService pool = Executors.newCachedThreadPool();
 			while(true) {

@@ -54,9 +54,9 @@ public class ObtenerTabla extends TimerTask {
 		try (Socket socket2 = new Socket(ip, puerto);){
 			this.TABLA = recibirTabla(socket2);
 			
-			/*for (Fichero fichero : TABLA.keySet()) {// <--------------------- prueba
+			for (Fichero fichero : TABLA.keySet()) {// <--------------------- prueba
 				System.out.println(fichero);
-			}*/
+			}
 		} catch (IOException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
