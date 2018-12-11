@@ -8,11 +8,11 @@ import java.util.concurrent.Executors;
 
 import ModeloDeDominio.Cliente;
 
-public class ServidorCliente {
+public class ServidorCliente implements Runnable{
 	
 	private int puertoServidor;
 
-	public ServidorCliente() {
+	public void run() {
 		try (ServerSocket ss = new ServerSocket(0)){
 			this.puertoServidor = ss.getLocalPort();
 			Socket cliente;

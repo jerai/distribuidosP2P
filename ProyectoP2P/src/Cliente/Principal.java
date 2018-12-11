@@ -6,11 +6,16 @@ import java.io.IOException;
 import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.Timer;
 import java.util.concurrent.TimeUnit;
 
 import javax.swing.JFileChooser;
+
+import ModeloDeDominio.Cliente;
+import ModeloDeDominio.Fichero;
 
 public class Principal {
 
@@ -18,7 +23,7 @@ public class Principal {
 		Scanner sn = new Scanner(System.in);
 		String opcion, descarga;
 		File directorio;
-		int puerto;
+//		int puerto;
 		System.out.print("¿Desea introducir un directorio para compartir y descargar ficheros? (Y/N): ");
 		opcion = sn.nextLine();
 		directorio = seleccionarDirectorio(opcion);
@@ -27,29 +32,37 @@ public class Principal {
 //		puerto = sn.nextInt();
 //		ServidorCliente sc = new ServidorCliente(puerto);
 		ServidorCliente sc = new ServidorCliente();
+		Thread th1 = new Thread(sc);
+		th1.start();
 		try(Socket cliente = new Socket("localhost", 6666);
 			DataOutputStream os = new DataOutputStream(cliente.getOutputStream())){
 			Timer timer = new Timer();
+			Map<Fichero, List<Cliente>> TABLA;
+			ObtenerTabla obtTabla;
 			do{
-				ObtenerTabla obtTabla = new ObtenerTabla(directorio, directorio.lastModified(), sc.getPuerto());
+				obtTabla = new ObtenerTabla(directorio, directorio.lastModified(), sc.getPuerto());
 				timer.schedule(obtTabla, 0, TimeUnit.MINUTES.toMinutes(5));
 				// Mostrar la tabla obtenida del servidor
+				TABLA = obtTabla.getTabla();
+				for (Fichero fichero : TABLA.keySet()) {
+					System.out.println(fichero);
+				}
 				System.out.print("Elige el fichero de la tabla que quieres descargar: ");
 				descarga = sn.nextLine();
 				ClienteCliente cc = new ClienteCliente(descarga);
 				// Una vez hecha la descarga, actualizar la tabla del servidor
-				os.writeUTF("SET");
+				os.write("SET\n".getBytes());
 				System.out.print("¿Quieres descargar más ficheros? (Y/N): ");
 				opcion = sn.nextLine();
 			} while(opcion.equals("Y") | opcion.equals("y"));
 			// Desconectar al cliente, quitándole de la tabla del servidor
-			os.writeUTF("SET");	
+			os.write("SET\n".getBytes());	
 			sn.close();
 			timer.cancel();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		} 
 	}
 	
 	public static File seleccionarDirectorio (String opcion) {
@@ -67,8 +80,10 @@ public class Principal {
 		        return directorio;
 	        } else {
 	        	try {
-					Files.createDirectory(Paths.get("./Compartidos"));
-					System.out.println("Se ha creado un directorio 'Compartidos' en el directorio por defecto");
+	        		if (!Files.isDirectory(Paths.get("./Compartidos"))) {
+	        			Files.createDirectory(Paths.get("./Compartidos"));
+	        		}
+					System.out.println("Se utilizará el directorio 'Compartidos' ubicado en el directorio por defecto");
 					return new File("./Compartidos");
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
@@ -78,8 +93,10 @@ public class Principal {
 	        }
 		} else {
 			try {
-				Files.createDirectory(Paths.get("./Compartidos"));
-				System.out.println("Se ha creado un directorio 'Compartidos' en el directorio por defecto");
+				if (!Files.isDirectory(Paths.get("./Compartidos"))) {
+        			Files.createDirectory(Paths.get("./Compartidos"));
+        		}
+				System.out.println("Se utilizará el directorio 'Compartidos' ubicado en el directorio por defecto");
 				return new File("./Compartidos");
 			} catch (IOException e) {
 				// TODO Auto-generated catch block

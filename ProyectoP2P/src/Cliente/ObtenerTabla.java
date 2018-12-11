@@ -41,8 +41,8 @@ public class ObtenerTabla extends TimerTask {
 			System.out.println("Actualizando tabla " + (this.directorio.lastModified() - this.fechaModificacion));// <--------------------- prueba
 			this.fechaModificacion = this.directorio.lastModified();
 			
-			try (Socket socket1 = new Socket(ip, puerto);){
-					mandarTabla(socket1);
+			try (Socket socket1 = new Socket(ip, puerto)){
+				mandarTabla(socket1);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -70,6 +70,7 @@ public class ObtenerTabla extends TimerTask {
 		}
 		
 		OutputStream os = s.getOutputStream();
+		System.out.println("SET " + this.puertoServidor + "\n");
 		os.write(("SET " + this.puertoServidor + "\n").getBytes());
 		ObjectOutputStream oos = new ObjectOutputStream(os);
 		oos.writeObject(listFicheros);

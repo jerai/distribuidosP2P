@@ -19,18 +19,18 @@ public class AtenderPeticion implements Runnable{
 		/*
 		 * Protocolos:
 		 * GET --> Pasar la tabla al cliente
-		 * SET <protocolo> --> Actualizar la lista de ficheros de ese cliente. <protocolo> es el protocolo por el que el cliente atiende peticiones
+		 * SET <puerto> --> Actualizar la lista de ficheros de ese cliente. <puerto> es el puerto por el que el cliente atiende peticiones
 		 */
 		try (DataInputStream is = new DataInputStream(this.cliente.getInputStream());){
-			String mensaje = is.readLine();
-			String protocolo = mensaje.split(" ")[0];
+			String[] mensaje = is.readLine().split(" ");
+			String protocolo = mensaje[0];
 			switch (protocolo) {
 				case "GET":
 					getTabla();
 					break;
 				case "SET":
-					if(mensaje.length()>1) {
-						actualizarFicheros(Integer.parseInt(mensaje.split(" ")[1]));
+					if(mensaje.length>1) {
+						actualizarFicheros(Integer.parseInt(mensaje[1]));
 					}
 					break;
 				default:
