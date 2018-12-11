@@ -1,27 +1,38 @@
 package ModeloDeDominio;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.List;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import Cliente.HashSHA256;
+
 public class Fichero implements Serializable{
 
 	private String hash;
 	private String nombre;
 	private String direccion;
+	private long tamano;
 	
 	// Constructores
-	public Fichero(String hash, String nombre, String direccion) {
-		this.hash = hash;
-		this.nombre = nombre;
-		this.direccion = direccion;
+//	public Fichero(String hash, String nombre, String direccion, long tamano) {
+//		this.hash = hash;
+//		this.nombre = nombre;
+//		this.direccion = direccion;
+//		this.tamano = tamano;
+//	}
+	
+	public Fichero(File f) {
+		this.hash = HashSHA256.getHash(f);
+		this.nombre = f.getName();
+		this.direccion = f.getAbsolutePath();
+		this.tamano = f.length();
 	}
 	
-	public Fichero(String hash, String direccion) {
+	public Fichero(String hash) {
 		this.hash = hash;
-		this.direccion = direccion;
 	}
 	
 	// Métodos
@@ -52,6 +63,14 @@ public class Fichero implements Serializable{
 		this.direccion = direccion;
 	}
 	
+	public long getTamano() {
+		return tamano;
+	}
+
+	public void setTamano(long tamano) {
+		this.tamano = tamano;
+	}
+
 	// Métodos redefinidos
 	// Dos Ficheros son iguales si coincide su hash
 	@Override
@@ -65,7 +84,7 @@ public class Fichero implements Serializable{
 	
 	@Override
 	public String toString() {
-		return "- Hash: " + this.hash + " - Path: " + this.direccion;
+		return "- Hash: " + this.hash + " - Path: " + this.direccion + " - Tamaño: " + this.tamano;
 	}
 	
 	// Con esto funciona la busqueda de claves en la tabla

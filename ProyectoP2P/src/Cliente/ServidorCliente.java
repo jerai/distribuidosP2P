@@ -6,32 +6,39 @@ import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import ModeloDeDominio.Cliente;
 
-public class ServidorCliente implements Runnable{
+public class ServidorCliente implements Runnable {
+
+	private ServerSocket ss;
 	
-	private int puertoServidor;
-
-	public void run() {
-		try (ServerSocket ss = new ServerSocket(0)){
-			this.puertoServidor = ss.getLocalPort();
-			Socket cliente;
-			ExecutorService pool = Executors.newCachedThreadPool();
-			while(true) {
-				try {
-					cliente = ss.accept();
-					pool.execute(new AtenderPeticion(cliente, this.puertoServidor));
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
+	public ServidorCliente() {
+		try {
+			this.ss = new ServerSocket(0);
 		} catch (IOException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
-	public int getPuerto() {
-		return puertoServidor;
-	}
+	public void run() {
+			System.out.println(this.ss.getLocalPort());	// prueba <-------------------------------------
+			Socket cliente;
+			ExecutorService pool = Executors.newCachedThreadPool();
+			while(true) {
+				try {
+					cliente = this.ss.accept();
+					pool.execute(new AtenderPeticion(cliente, this.ss.getLocalPort()));
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 
+			}
+	}
+	
+	public int getPuerto() {
+		return this.ss.getLocalPort();
+	}
+	
 }
+
+

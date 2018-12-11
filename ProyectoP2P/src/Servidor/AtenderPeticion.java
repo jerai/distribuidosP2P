@@ -22,8 +22,13 @@ public class AtenderPeticion implements Runnable{
 		 * SET <puerto> --> Actualizar la lista de ficheros de ese cliente. <puerto> es el puerto por el que el cliente atiende peticiones
 		 */
 		try (DataInputStream is = new DataInputStream(this.cliente.getInputStream());){
-			String[] mensaje = is.readLine().split(" ");
-			String protocolo = mensaje[0];
+			String linea = is.readLine();
+//			String[] mensaje = null;
+//			String protocolo = "";
+//			if (linea != null) {
+				String[] mensaje = linea.split(" ");
+				String protocolo = mensaje[0];
+//			}
 			switch (protocolo) {
 				case "GET":
 					getTabla();
