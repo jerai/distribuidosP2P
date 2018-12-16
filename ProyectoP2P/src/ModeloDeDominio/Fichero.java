@@ -2,10 +2,6 @@ package ModeloDeDominio;
 
 import java.io.File;
 import java.io.Serializable;
-import java.util.List;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 import Cliente.HashSHA256;
 
@@ -17,12 +13,12 @@ public class Fichero implements Serializable{
 	private long tamano;
 	
 	// Constructores
-//	public Fichero(String hash, String nombre, String direccion, long tamano) {
-//		this.hash = hash;
-//		this.nombre = nombre;
-//		this.direccion = direccion;
-//		this.tamano = tamano;
-//	}
+	public Fichero(String hash, String nombre, String direccion, long tamano) {
+		this.hash = hash;
+		this.nombre = nombre;
+		this.direccion = direccion;
+		this.tamano = tamano;
+	}
 	
 	public Fichero(File f) {
 		this.hash = HashSHA256.getHash(f);

@@ -37,7 +37,7 @@ public class ObtenerTabla extends TimerTask {
 		String ip = Configuracion.get("ipServidor");
 		int puerto = Integer.parseInt(Configuracion.get("puertoServidor"));
 		
-		//System.out.println("----------------------------------------------------------");// <--------------------- prueba
+		System.out.println("----------------------------------------------------------");// <--------------------- prueba
 		
 		if (this.fechaModificacion != this.directorio.lastModified()) {
 			System.out.println("Actualizando tabla " + (this.directorio.lastModified() - this.fechaModificacion));// <--------------------- prueba

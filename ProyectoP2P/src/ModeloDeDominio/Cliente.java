@@ -2,9 +2,6 @@ package ModeloDeDominio;
 
 import java.io.Serializable;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
 public class Cliente implements Serializable{
 
 	private String ip;

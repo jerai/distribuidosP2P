@@ -1,12 +1,9 @@
 package Cliente;
 
-import java.io.DataInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
-import java.net.MalformedURLException;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.CountDownLatch;
@@ -20,18 +17,18 @@ public class Descargador implements Runnable {
 	private CountDownLatch count;
 	private String host;
 	private int puerto;
-	private File ficheroDestino;
+	//private File ficheroDestino; <----------- ¿Es necesario?
 	private Fichero ficheroOrigen;
 	private String path;
 
-	public Descargador(long inicio, long fin, CountDownLatch count, String host, int puerto, Fichero ficheroOrigen, File ficheroDestino, String path) {
+	public Descargador(long inicio, long fin, CountDownLatch count, String host, int puerto, Fichero ficheroOrigen/*, File ficheroDestino*/, String path) {
 		this.inicio = inicio;
 		this.fin = fin;
 		this.count = count;
 		this.host = host;
 		this.puerto = puerto;
 		this.ficheroOrigen = ficheroOrigen;
-		this.ficheroDestino = ficheroDestino;
+		//this.ficheroDestino = ficheroDestino; 
 		this.path = path;
 	}
 

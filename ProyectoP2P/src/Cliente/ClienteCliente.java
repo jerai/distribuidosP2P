@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.Timer;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import javax.swing.JFileChooser;
@@ -30,8 +32,9 @@ public class ClienteCliente implements Runnable{
 	public void run() {
 		
 		Scanner sn = new Scanner(System.in);
-		String opcion, descarga;
-		File directorio;
+		String opcion;
+		File directorio/*, ficheroDestino*/;
+		Fichero ficheroOrigen;
 		System.out.print("¿Desea introducir un directorio para compartir y descargar ficheros? (Y/N): ");
 		opcion = sn.nextLine();
 		directorio = seleccionarDirectorio(opcion);
@@ -40,18 +43,31 @@ public class ClienteCliente implements Runnable{
 		ObtenerTabla obtTabla;
 		try {
 			do{
-				final CountDownLatch count = new CountDownLatch(1);
+				CountDownLatch count = new CountDownLatch(1);
 				obtTabla = new ObtenerTabla(count, directorio, directorio.lastModified(), this.puertoServidor);
 				timer.schedule(obtTabla, 0, TimeUnit.MINUTES.toMinutes(5));
 				count.await();
 				TABLA = obtTabla.getTabla();
-				System.out.println(directorio.getAbsolutePath() + " efbdf " + TABLA.size());
+				System.out.println("TAMAÑO TABLA: " + TABLA.size()); // <--------------------------- prueba
+				int i = 1;
 				for (Fichero fichero : TABLA.keySet()) {
-					System.out.println(fichero);
+					System.out.println(i + ". " + fichero.getNombre());
+					i++;
 				}
-				
 				System.out.print("Elige el fichero de la tabla que quieres descargar: ");
-				descarga = sn.nextLine();
+				i = sn.nextInt();
+				ficheroOrigen = (Fichero) TABLA.keySet().toArray()[i-1];
+				String dirDestino = directorio.getAbsolutePath() + "/" + ficheroOrigen.getNombre();
+				long tamaño = ficheroOrigen.getTamano();
+				//ficheroDestino = new File(ficheroOrigen.getNombre());
+				List<Cliente> clientes = TABLA.get(ficheroOrigen);
+				count = new CountDownLatch(clientes.size());
+				ExecutorService pool = Executors.newFixedThreadPool(clientes.size());
+				for (i = 0; i < clientes.size(); i++) {
+					pool.execute(new Descargador(tamaño*i/clientes.size(), tamaño*(i+1)/clientes.size(), count, clientes.get(i).getIp(), clientes.get(i).getPuerto(), ficheroOrigen/*, ficheroDestino*/, dirDestino));
+				}
+				count.await();
+				pool.shutdown();
 				// Una vez hecha la descarga, actualizar la tabla del servidor
 				try {
 					os.write("SET\n".getBytes());

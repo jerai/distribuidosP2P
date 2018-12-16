@@ -1,9 +1,6 @@
 package Test;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.Timer;
 import java.util.concurrent.CountDownLatch;
 

@@ -22,12 +22,12 @@ public class AtenderPeticion implements Runnable{
 		 */
 		try (DataInputStream is = new DataInputStream(this.cliente.getInputStream());){
 			String linea = is.readLine();
-			String[] mensaje = null;
-			String protocolo = "";
-			if (linea != null) {
-				mensaje = linea.split(" ");
-				protocolo = mensaje[0];
-			}
+			//String[] mensaje = null;
+			//String protocolo = "";
+			//if (linea != null) {
+				String[] mensaje = linea.split(" ");
+				String protocolo = mensaje[0];
+			//}
 			switch (protocolo) {
 				case "GET":
 					getTabla();
