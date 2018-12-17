@@ -11,6 +11,7 @@ public class TestCliente {
 	public static void main(String[] args) {
 		try (ServerSocket ss = new ServerSocket(0)){
 			ServidorCliente sc = new ServidorCliente();
+			sc.run();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

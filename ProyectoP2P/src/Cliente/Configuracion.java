@@ -3,6 +3,7 @@ package Cliente;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +28,18 @@ public class Configuracion {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	public static void set(String key, String value) {
+		try {
+			Properties prop = new Properties();
+			prop.load(new FileInputStream(nombreFichero));
+			prop.setProperty(key, value);
+			prop.store(new FileOutputStream(nombreFichero), null);
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	// Devuelve una lista con los ficheros que contiene un directorio incluyendo los que están en carpetas

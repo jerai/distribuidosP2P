@@ -38,12 +38,12 @@ public class ClienteCliente implements Runnable{
 		Timer timer = new Timer();
 		Map<Fichero, List<Cliente>> TABLA;
 		ObtenerTabla obtTabla;
-		try {
+//		try {
 			do{
-				final CountDownLatch count = new CountDownLatch(1);
-				obtTabla = new ObtenerTabla(count, directorio, directorio.lastModified(), this.puertoServidor);
+//				final CountDownLatch count = new CountDownLatch(1);
+				obtTabla = new ObtenerTabla(directorio, this.puertoServidor);
 				timer.schedule(obtTabla, 0, TimeUnit.MINUTES.toMinutes(5));
-				count.await();
+//				count.await();
 				TABLA = obtTabla.getTabla();
 				System.out.println(directorio.getAbsolutePath() + " efbdf " + TABLA.size());
 				for (Fichero fichero : TABLA.keySet()) {
@@ -71,9 +71,9 @@ public class ClienteCliente implements Runnable{
 			}	
 			sn.close();
 			timer.cancel();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		} 
+//		} catch (InterruptedException e) {
+//			e.printStackTrace();
+//		} 
 	}
 	
 	public static File seleccionarDirectorio (String opcion) {

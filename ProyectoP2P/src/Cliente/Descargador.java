@@ -22,9 +22,8 @@ public class Descargador implements Runnable {
 	private int puerto;
 	private File ficheroDestino;
 	private Fichero ficheroOrigen;
-	private String path;
 
-	public Descargador(long inicio, long fin, CountDownLatch count, String host, int puerto, Fichero ficheroOrigen, File ficheroDestino, String path) {
+	public Descargador(long inicio, long fin, CountDownLatch count, String host, int puerto, Fichero ficheroOrigen, File ficheroDestino) {
 		this.inicio = inicio;
 		this.fin = fin;
 		this.count = count;
@@ -32,14 +31,13 @@ public class Descargador implements Runnable {
 		this.puerto = puerto;
 		this.ficheroOrigen = ficheroOrigen;
 		this.ficheroDestino = ficheroDestino;
-		this.path = path;
 	}
 
 	public void run() {
 		try {
 			// indicar desde donde hasta donde
-			
-			RandomAccessFile raf = new RandomAccessFile(this.path, "rw");
+
+			RandomAccessFile raf = new RandomAccessFile(this.ficheroDestino, "rw");
 			raf.seek(this.inicio);
 			
 			Socket s = new Socket(this.host, this.puerto);

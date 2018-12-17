@@ -19,6 +19,7 @@ public class AtenderPeticion implements Runnable{
 		 * Protocolos:
 		 * GET --> Pasar la tabla al cliente
 		 * SET <puerto> --> Actualizar la lista de ficheros de ese cliente. <puerto> es el puerto por el que el cliente atiende peticiones
+		 * OFF --> El cliente se desconecta de la red y hay que borrar todos sus registros de la tabla
 		 */
 		try (DataInputStream is = new DataInputStream(this.cliente.getInputStream());){
 			String linea = is.readLine();

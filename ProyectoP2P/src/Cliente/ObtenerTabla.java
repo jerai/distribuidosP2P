@@ -17,17 +17,17 @@ import ModeloDeDominio.Fichero;
 
 public class ObtenerTabla extends TimerTask {
 
-	private CountDownLatch count;
+//	private CountDownLatch count;
 	private File directorio;
 	private long fechaModificacion;
 	private int puertoServidor;
 
 	private Map<Fichero, List<Cliente>> TABLA;
 
-	public ObtenerTabla(CountDownLatch count, File directorio, long fechaModificacion, int puertoServidor) {
-		this.count = count;
+	public ObtenerTabla(File directorio, int puertoServidor) {
+//		this.count = count;
 		this.directorio = directorio;
-		this.fechaModificacion = fechaModificacion;
+		this.fechaModificacion = 0;
 		this.puertoServidor = puertoServidor;
 	}
 
@@ -61,7 +61,7 @@ public class ObtenerTabla extends TimerTask {
 			e.printStackTrace();
 		}
 		
-		count.countDown();
+//		count.countDown();
 	}
 
 	// Crea un objeto List<Fichero> con los ficheros del directorio compartido y lo manda por el Socket

@@ -12,18 +12,18 @@ import ModeloDeDominio.Fichero;
 public class TestDescarga {
 
 	public static void main(String[] args) {
-		Fichero f = new Fichero("96c9766aa0d2590be49a4693e4919653a72537b662501f56dfa74404d06ccaef");
-		
+		// - Hash: ab8103117ad8be7e3384704738536f418ba14a32c42067858c1a736f30cac247 - Path: C:\Users\Jerai\Desktop\Compartido\ffff.txt - Tamaño: 16
+		Fichero f = new Fichero("ab8103117ad8be7e3384704738536f418ba14a32c42067858c1a736f30cac247"); 
 		try {
 			final CountDownLatch count = new CountDownLatch(1);
 			ExecutorService pool = Executors.newFixedThreadPool(1);
-			File file = new File("aux.txt");
+			File file = new File("C:\\Users\\Jerai\\Desktop\\descargados\\auxsdfhusyidbfyuasdg.txt");
 			boolean asdas = file.createNewFile();
 			String p = file.getAbsolutePath();
 			String pp = file.getPath();
 			
 			
-			Descargador des = new Descargador(0, 15L, count, "127.0.0.1", 50734, f, file, "../aux.txt");
+			Descargador des = new Descargador(0, 15L, count, "127.0.0.1", 55816, f, file);
 			pool.execute(des);
 			count.await();
 			System.out.println("done");
