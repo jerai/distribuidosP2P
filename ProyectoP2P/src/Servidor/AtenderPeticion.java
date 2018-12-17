@@ -38,6 +38,11 @@ public class AtenderPeticion implements Runnable{
 						actualizarFicheros(Integer.parseInt(mensaje[1]));
 					}
 					break;
+				case "OFF":
+					if(mensaje.length>1) {
+						desconectarUsuario(Integer.parseInt(mensaje[1]));
+					}
+					break;
 				default:
 					break;
 			}
@@ -50,17 +55,22 @@ public class AtenderPeticion implements Runnable{
 
 	// Devuelve la tabla completa al cliente que la ha solicitado
 	private void getTabla() throws IOException {
-		TablaXML.mandarTabla(this.cliente.getOutputStream());
+		Tabla.mandarTabla(this.cliente.getOutputStream());
 	}
 
 	// Actualiza la tabla con los datos que recibe del cliente
 	private void actualizarFicheros(int puerto) throws IOException {
 		String ip = this.cliente.getInetAddress().getHostAddress();
 		
-		Cliente c = TablaXML.getCliente(ip, puerto);
+		Cliente c = Tabla.getCliente(ip, puerto);
 		if(c==null)
 			c = new Cliente(ip, puerto);
-		TablaXML.actualizarTabla(this.cliente.getInputStream(), c);
+		Tabla.actualizarTabla(this.cliente.getInputStream(), c);
+	}
+
+	// Borra todos los archivos de un usuario de la tabla
+	private void desconectarUsuario(int puerto) {
+		Tabla.desconectarUsuario(this.cliente.getInetAddress().getHostAddress(), puerto);
 	}
 	
 }

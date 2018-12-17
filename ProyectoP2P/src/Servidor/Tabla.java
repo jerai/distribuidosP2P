@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import ModeloDeDominio.Cliente;
 import ModeloDeDominio.Fichero;
 
-public final class TablaXML {
+public final class Tabla {
 	
 	private static ConcurrentHashMap<Fichero, List<Cliente>> TABLA = new ConcurrentHashMap<>();;
 	private static List<Cliente> listaClientes = new ArrayList<>();
@@ -77,5 +77,19 @@ public final class TablaXML {
     		c = listaClientes.get(i);
     	return c;
     }
+
+	public static void desconectarUsuario(String ip, int puerto) {
+		Cliente cli = new Cliente(ip, puerto);
+		for(Fichero f : TABLA.keySet()) {
+			List<Cliente> aux = TABLA.get(f);
+			if(aux.contains(cli)) {
+				if(aux.size()==1) {
+					TABLA.remove(f);
+				}else {
+					aux.remove(cli);
+				}
+			}
+		}
+	}
     
 }

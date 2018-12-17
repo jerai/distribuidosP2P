@@ -21,6 +21,7 @@ import java.awt.Insets;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
@@ -54,6 +55,12 @@ import javax.swing.JScrollPane;
 import java.awt.Component;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeEvent;
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
 
 public class InterfazVentana extends JFrame {
 
@@ -82,6 +89,16 @@ public class InterfazVentana extends JFrame {
 	 * Create the frame.
 	 */
 	public InterfazVentana() {
+		addWindowListener(new WindowAdapter() {
+			public void windowClosed(WindowEvent arg0) {
+				try (Socket socket = new Socket(Configuracion.get("ipServidor"), Integer.parseInt(Configuracion.get("puertoServidor")));){
+					OutputStream os = socket.getOutputStream();
+					os.write("OFF\n".getBytes());
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		});
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 876, 494);
 		contentPane = new JPanel();
@@ -103,6 +120,11 @@ public class InterfazVentana extends JFrame {
 		TopLeft.add(lblServidor);
 		
 		txtServidor = new JTextField();
+		txtServidor.addPropertyChangeListener(new PropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent arg0) {
+				Configuracion.set("ipServidor", txtServidor.getText());
+			}
+		});
 		TopLeft.add(txtServidor);
 		txtServidor.setColumns(10);
 		
@@ -137,6 +159,10 @@ public class InterfazVentana extends JFrame {
 		chckbxServidor.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				chckbxServidor.setEnabled(false);
+				Configuracion.set("ipServidor", "127.0.0.1");
+				txtServidor.setText("localhost");
+				txtServidor.setEditable(false);
+				timersTablas();
 				Servidor.Principal s = new Principal();
 				Thread th1 = new Thread(s);
 				th1.start();
@@ -181,7 +207,6 @@ public class InterfazVentana extends JFrame {
 		gbc_CentCent.gridx = 1;
 		gbc_CentCent.gridy = 0;
 		Central.add(CentCent, gbc_CentCent);
-		CentCent.setLayout(new GridLayout(3, 1, 0, 0));
 		
 		JButton btnDescargar = new JButton("Descargar");
 		btnDescargar.addActionListener(new ActionListener() {
@@ -189,10 +214,8 @@ public class InterfazVentana extends JFrame {
 				descargar(tablaServidor.getSelectedRow());
 			}
 		});
+		CentCent.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 		CentCent.add(btnDescargar);
-		
-		JButton btnActualizar = new JButton("Actualizar");
-		CentCent.add(btnActualizar);
 		
 		JPanel CentDcha = new JPanel();
 		GridBagConstraints gbc_CentDcha = new GridBagConstraints();
@@ -278,8 +301,10 @@ public class InterfazVentana extends JFrame {
 			ExecutorService pool = Executors.newFixedThreadPool(1);
 			File file = new File(directorioCompartido.getAbsolutePath() + "\\" + fich.getNombre());
 			
-			
-			Descargador des = new Descargador(0, fich.getTamano(), count, Configuracion.get("ipServidor"), puertoServidor, fich, file);
+			String ipCliente = lisClientes.get(0).getIp();
+			if(ipCliente.equals("127.0.0.1"))// si la ip es localhost el fichero esta en el servidor
+				ipCliente = Configuracion.get("ipServidor");
+			Descargador des = new Descargador(0, fich.getTamano(), count, ipCliente, lisClientes.get(0).getPuerto(), fich, file);
 			pool.execute(des);
 			count.await();
 			System.out.println("done");
