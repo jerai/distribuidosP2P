@@ -3,23 +3,20 @@ package Cliente;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
 
 import ModeloDeDominio.Fichero;
 
 public class AtenderPeticion implements Runnable {
 
 	private Socket cliente;
-	private int puertoServidor;
+	//private int puertoServidor; <----------------------- pa' qué?
 
-	public AtenderPeticion(Socket cliente, int puertoServidor) {
+	public AtenderPeticion(Socket cliente/*, int puertoServidor*/) {
 		this.cliente = cliente;
-		this.puertoServidor = puertoServidor;
+		//this.puertoServidor = puertoServidor;
 	}
 
 	public void run() {

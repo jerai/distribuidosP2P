@@ -1,15 +1,8 @@
 package Cliente;
 
 import java.io.DataOutputStream;
-import java.io.File;
 import java.io.IOException;
-import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.Scanner;
-
-import javax.swing.JFileChooser;
 
 public class Principal {
 

@@ -32,12 +32,12 @@ public class ObtenerTabla extends TimerTask {
 	}
 
 	public void run() {
-		InputStream is = null;
-		OutputStream os = null;
+		/*InputStream is = null;
+		OutputStream os = null;*/
 		String ip = Configuracion.get("ipServidor");
 		int puerto = Integer.parseInt(Configuracion.get("puertoServidor"));
 		
-		System.out.println("----------------------------------------------------------");// <--------------------- prueba
+		//System.out.println("----------------------------------------------------------");// <--------------------- prueba
 		
 		if (this.fechaModificacion != this.directorio.lastModified()) {
 			System.out.println("Actualizando tabla " + (this.directorio.lastModified() - this.fechaModificacion));// <--------------------- prueba
@@ -53,10 +53,11 @@ public class ObtenerTabla extends TimerTask {
 
 		try (Socket socket2 = new Socket(ip, puerto);){
 			this.TABLA = recibirTabla(socket2);
-			
+			/*
 			for (Fichero fichero : TABLA.keySet()) {// <--------------------- prueba
 				System.out.println(fichero);
 			}
+			*/
 		} catch (IOException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}

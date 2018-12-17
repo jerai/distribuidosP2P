@@ -33,6 +33,7 @@ public class ClienteCliente implements Runnable{
 		
 		Scanner sn = new Scanner(System.in);
 		String opcion;
+		String mensajeActualizar = "SET " + this.puertoServidor + "/n";
 		File directorio/*, ficheroDestino*/;
 		Fichero ficheroOrigen;
 		System.out.print("¿Desea introducir un directorio para compartir y descargar ficheros? (Y/N): ");
@@ -70,7 +71,7 @@ public class ClienteCliente implements Runnable{
 				pool.shutdown();
 				// Una vez hecha la descarga, actualizar la tabla del servidor
 				try {
-					os.write("SET\n".getBytes());
+					os.write(mensajeActualizar.getBytes());
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -80,7 +81,7 @@ public class ClienteCliente implements Runnable{
 			} while(opcion.equals("Y") | opcion.equals("y"));
 			// Desconectar al cliente, quitándole de la tabla del servidor
 			try {
-				os.write("SET\n".getBytes());
+				os.write(mensajeActualizar.getBytes());
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

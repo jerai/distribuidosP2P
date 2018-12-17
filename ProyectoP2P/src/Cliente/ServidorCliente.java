@@ -27,7 +27,7 @@ public class ServidorCliente implements Runnable {
 			while(true) {
 				try {
 					cliente = this.ss.accept();
-					pool.execute(new AtenderPeticion(cliente, this.ss.getLocalPort()));
+					pool.execute(new AtenderPeticion(cliente/*, this.ss.getLocalPort()*/));
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
